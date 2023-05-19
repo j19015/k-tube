@@ -1,0 +1,46 @@
+version: "3"
+services:
+  node:
+    tty: true
+    build: ./docker
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./:/opt/app
+    environment:
+      AWS_REGION: ap-northeast-1
+      AWS_ACCESS_KEY_ID: local
+      AWS_SECRET_ACCESS_KEY: dummy
+      S3_ENDPOINT: "http://storage:9090"
+      S3_BUCKET: "video-bucket"
+      DB_HOST: "db"
+      DB_USERNAME: "postgres"
+      DB_PASSWORD: "password"
+      DB_DATABASE: "mock"
+      REDIS_HOST: "cache"
+    depends_on:
+      - db
+      - cache
+      - storage
+  db:
+    image: "postgres:15-alpine"
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=mock
+    volumes:
+      - db-store:/var/lib/postgresql/data
+  cache:
+    image: "redis:7"
+    ports:
+      - "6379:6379"
+  storage:
+    image: "adobe/s3mock"
+    ports:
+      - "9090:9090"
+    environment:
+      initialBuckets: video-bucket
+      debug: true
+volumes:
+  db-store:
