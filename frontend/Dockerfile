@@ -11,13 +11,13 @@ COPY package*.json ./
 RUN npm install
 
 # ソースコードをコピー
-COPY src/ .
+COPY . .
 
-# フロントエンドのビルド
+# TypeScriptのビルド
 RUN npm run build
 
 # ポートの公開
-EXPOSE 3000
+EXPOSE 3001
 
 # アプリケーションの起動
 CMD ["npm", "start"]
