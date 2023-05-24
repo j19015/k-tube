@@ -9,7 +9,7 @@ import { HeadObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { User } from './entity/User';
 import { isLeepYear } from './sample';
 
-const publicDir = "localhost:3000";
+const publicDir = __dirname + '/../public/';
 
 const dataSource = new DataSource({
   type: "postgres",
@@ -36,14 +36,6 @@ dataSource.initialize().then(() => {
   app.use('/', json());
   app.use(express.static(publicDir)); // 静的ファイル返す用
 
-  app.use('/', (req, res, next) => {
-    if (req.path === '/') {
-      // ルートパス (/) へのリクエストの場合、リダイレクトを行う
-      res.redirect('http://localhost:3000');
-    } else {
-      next(); // 次のミドルウェアに処理を渡す
-    }
-  });
   app.get('/hello', (req, res) => {
     console.log("aaaaa")
     res.json({ result: "hello" }).end();
