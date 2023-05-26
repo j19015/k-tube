@@ -16,9 +16,8 @@ COPY . .
 # TypeScriptのビルド
 RUN npm run build
 
-
 # ポートの公開
 EXPOSE 3001
 
 # アプリケーションの起動
-CMD ["npm", "start"]
+CMD ["npm", "start","typeorm","migration:run"]
