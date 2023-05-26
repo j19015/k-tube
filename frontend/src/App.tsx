@@ -23,7 +23,6 @@ function App() {
       });
       const data: Data = await res.json();
       console.log(data);
-      console.log("登録うまくいってそう");
     }catch(e){
       console.log(e);
     }

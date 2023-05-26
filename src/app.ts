@@ -33,15 +33,11 @@ const s3Client = new S3Client({
 
 dataSource.initialize().then(() => {
   const app = express();
+  //CORSの許可
   const cors = require('cors');
   app.use(cors());
   app.use('/', json());
   app.use(express.static(publicDir)); // 静的ファイル返す用
-
-  app.get('/hello', (req, res) => {
-    console.log("aaaaa")
-    res.json({ result: "hello" }).end();
-  });
 
   app.get('/db', async (req, res) => {
     const userRepository = dataSource.getRepository(User);
@@ -96,10 +92,11 @@ dataSource.initialize().then(() => {
       // エンティティをデータベースに保存
       await dataSource.manager.save(user);
   
-      res.json({ uname: user.uname }).end();
+      res.json({ status: 1 }).end();
     } catch (error) {
       console.error(error);
-      res.status(500).json({ error: 'Failed to save user' }).end();
+      //res.status(500).json({ error: 'Failed to save user' }).end();
+      res.json({ status: 0 }).end();
     }
   });
 
@@ -112,22 +109,25 @@ dataSource.initialize().then(() => {
   
       if (!user) {
         // ユーザーが存在しない場合はログイン失敗として処理する
-        res.status(401).json({ error: 'Invalid credentials' }).end();
+        //res.status(401).json({ error: 'Invalid credentials' }).end();
+        res.json({ status: 0 }).end();
         return;
       }
   
       if (user.password !== password) {
         // パスワードが一致しない場合もログイン失敗として処理する
-        res.status(401).json({ error: 'Invalid credentials' }).end();
+        //res.status(401).json({ error: 'Invalid credentials' }).end();
+        res.json({ status: 0 }).end();
         return;
       }
   
       // ログイン成功時の処理をここに記述する
   
-      res.json({ message: 'Login successful' }).end();
+      res.json({ status: 1 }).end();
     } catch (error) {
       console.error(error);
-      res.status(500).json({ error: 'Failed to perform login' }).end();
+      //res.status(500).json({ error: 'Failed to perform login' }).end();
+      res.json({ status: 0 }).end();
     }
   });
 
