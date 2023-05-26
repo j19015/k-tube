@@ -96,10 +96,38 @@ dataSource.initialize().then(() => {
       // エンティティをデータベースに保存
       await dataSource.manager.save(user);
   
-      res.json({ uaname: user.uname }).end();
+      res.json({ uname: user.uname }).end();
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'Failed to save user' }).end();
+    }
+  });
+
+  app.post('/signin', async (req, res) => {
+    const { uname, password } = req.body;
+  
+    try {
+      const userRepository = dataSource.getRepository(User);
+      const user = await userRepository.findOne({ where: { uname }, select: ['password']  });
+  
+      if (!user) {
+        // ユーザーが存在しない場合はログイン失敗として処理する
+        res.status(401).json({ error: 'Invalid credentials' }).end();
+        return;
+      }
+  
+      if (user.password !== password) {
+        // パスワードが一致しない場合もログイン失敗として処理する
+        res.status(401).json({ error: 'Invalid credentials' }).end();
+        return;
+      }
+  
+      // ログイン成功時の処理をここに記述する
+  
+      res.json({ message: 'Login successful' }).end();
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Failed to perform login' }).end();
     }
   });
 
