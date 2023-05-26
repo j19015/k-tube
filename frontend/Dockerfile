@@ -16,6 +16,7 @@ COPY . .
 # TypeScriptのビルド
 RUN npm run build
 
+
 # ポートの公開
 EXPOSE 3001
 

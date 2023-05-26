@@ -33,6 +33,8 @@ const s3Client = new S3Client({
 
 dataSource.initialize().then(() => {
   const app = express();
+  const cors = require('cors');
+  app.use(cors());
   app.use('/', json());
   app.use(express.static(publicDir)); // 静的ファイル返す用
 
@@ -80,7 +82,31 @@ dataSource.initialize().then(() => {
     }
   });
 
+  
   //とりあえず
+  app.get('/count', (req, res) => {
+    console.log("aaaaa");
+    res.json({ text: "山本" }).end();
+  });
+
+  app.post('/signup', async(req, res) => {
+    console.log("aaaaa");
+    const userRepository = dataSource.getRepository(User);
+    try {
+      const user = new User();
+      user.uname = req.body.uname;
+      user.password = req.body.password;
+  
+      // エンティティをデータベースに保存
+      await dataSource.manager.save(user);
+  
+      res.json({ uaname: user.uname }).end();
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Failed to save user' }).end();
+    }
+    //res.json({uname: req.body.uname,password: req.body.password}).end();
+  });
 
   const port = env.SERVER_PORT;
   app.listen(port, () => {
