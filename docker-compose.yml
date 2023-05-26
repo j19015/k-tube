@@ -31,7 +31,8 @@ services:
       - ./frontend:/app  # ホストマシンのfrontendディレクトリを
     tty: true
     environment:
-      - CHOKIDAR_USEPOLLING=true //ホットリロードを行う設定
+      - CHOKIDAR_USEPOLLING=true #ホットリロードを行う設定
+      - CORS_ORIGIN=http://localhost:3000 #CORS用
   db:
     image: "postgres:15-alpine"
     ports:
