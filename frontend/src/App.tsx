@@ -9,20 +9,8 @@ interface Data {
 }
 
 function App() {
-  const [text,setText]= useState("");
   const [uname,setUname]=useState("");
   const [password,setPassword]=useState("");
-  const temp=async()=>{
-    try{
-      const res: Response = await fetch("http://localhost:3000/count");
-      const data: Data = await res.json();
-      console.log(data["text"]);
-      setText(data["text"]);
-      console.log("うまくいってそう");
-    }catch(e){
-      console.log(e);
-    }
-  }
 
   const signup=async()=>{
     try{
@@ -43,8 +31,6 @@ function App() {
 
   return (
     <div className="App">
-      <button onClick={temp}>Fetch Count</button>
-      <p>{text}</p>
       uname: <input value={uname} onChange={e=>setUname(e.target.value)}></input><br/>
       password: <input value={password} onChange={e=>setPassword(e.target.value)}></input><br/>
       <button onClick={signup}>登録</button>
