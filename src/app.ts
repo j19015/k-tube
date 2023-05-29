@@ -38,12 +38,13 @@ const s3Client = new S3Client({
   forcePathStyle: !!env.S3_ENDPOINT, // S3ローカルモック使用時はtrue
 });
 
+const allowedOrigins = ['http://localhost:3000','http://localhost:3001']; // クライアントのホスト名を追加
 dataSource.initialize().then(() => {
   const app = express();
   //CORSの許可
   app.use(cors({
     credentials: true,
-    origin:"http://localhost:3001"
+    origin: allowedOrigins,
   }
   ));
 
@@ -178,7 +179,7 @@ app.use(
       //秘密鍵でkeyを暗号化し、cookieとして送信
 
       //ブラウザに暗号化したkeyを保存
-
+      
   
       res.json({ status: 1 }).end();
     } catch (error) {
@@ -193,9 +194,9 @@ app.use(
     const user = (req.session as any).user; // セッションからユーザー情報を取得
     //console.log(req.session);
     if (user) {
-      res.json({ login_session_status: 1 }).end();
+      res.json({ login_session_status: true }).end();
     } else {
-      res.json({ login_session_status: 0 }).end();
+      res.json({ login_session_status: false }).end();
     }
   });
   const port = env.SERVER_PORT;
