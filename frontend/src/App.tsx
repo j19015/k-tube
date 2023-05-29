@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { PassThrough } from 'stream';
 
 interface Data {
-  text: string;
+  status: string;
 }
 
 function App() {
@@ -14,15 +14,16 @@ function App() {
 
   const signup=async()=>{
     try{
-      const res: Response = await fetch("http://localhost:3000/signup",{
+      const res: Response = await fetch("http://localhost:3000/signin",{
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ uname: uname,password: password }),
+        credentials: 'include'
       });
       const data: Data = await res.json();
-      console.log(data);
+      console.log(data.status);
     }catch(e){
       console.log(e);
     }
