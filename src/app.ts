@@ -4,10 +4,17 @@ import * as env from "./env";
 
 import express from 'express';
 import { DataSource } from 'typeorm';
+//session
+
 import { Redis } from 'ioredis';
+import  session  from "express-session";
+import connectRedis from "connect-redis";
+
 import { HeadObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { User } from './entity/User';
 import { isLeepYear } from './sample';
+
+import cors from 'cors';
 
 const publicDir = __dirname + '/../public/';
 
@@ -34,8 +41,49 @@ const s3Client = new S3Client({
 dataSource.initialize().then(() => {
   const app = express();
   //CORSの許可
-  const cors = require('cors');
-  app.use(cors());
+  app.use(cors({
+    credentials: true,
+    origin:"http://localhost:3001"
+  }
+  ));
+
+  // RedisStoreの初期化
+  const RedisStore = connectRedis(session);
+
+app.use(
+  session({
+    //クッキーの名前を指定。ここではセッションクッキーの名前を "qid" に設定。
+    name: "qid",
+    // セッションデータの永続化にRedisを使用するための設定。
+    // clientにはRedisクライアントが指定されており、既存のRedisクライアントを使用する場合に渡されます。
+    // disableTouchは省略可能なオプションで、セッションの有効期限の更新を無効にするかどうかを指定します。
+    store: new RedisStore({
+      client: redisClient,
+      disableTouch: true,
+    }),
+    cookie: {
+      //domain: "localhost:3001",
+      //path: "/",
+      // maxAgeはクッキーの有効期限をミリ秒単位で指定します。ここでは10年に設定されています。
+      // httpOnlyはセッションクッキーをJavaScriptからアクセスできないようにするかどうかを指定します。
+      // sameSiteはクッキーのSameSite属性を指定します。ここでは "lax" に設定されており、クロスサイトリクエストの際にはクッキーが送信されることができます。
+      maxAge: 1000 * 60 * 60 * 24 * 365 * 10, // クッキーの有効期限（10年）
+      httpOnly: true,
+      sameSite: "lax",
+      //secureオプションがtrueに設定されている場合、クライアントがセキュアな接続（HTTPS）を使用している場合にのみ、セッションクッキーが送信されます。これにより、通信が暗号化されており、盗聴やクッキーの傍受による攻撃を防ぐことができます。
+      //一旦false
+      //
+      secure: false,
+    },
+    //未初期化のセッションを保存するかどうかを指定します。ここではfalseに設定されており、未初期化のセッションは保存されません。
+    saveUninitialized: false,
+    //セッションの署名に使用するシークレットキーを指定します。セッションデータの改ざんを防ぐために必要です。
+    secret: "your-secret-key",
+    //セッションストアにセッションデータを保存する必要がない場合にfalseに設定します。
+    resave: false,
+  })
+);
+
   app.use('/', json());
   app.use(express.static(publicDir)); // 静的ファイル返す用
 
@@ -105,23 +153,32 @@ dataSource.initialize().then(() => {
   
     try {
       const userRepository = dataSource.getRepository(User);
-      const user = await userRepository.findOne({ where: { uname }, select: ['password']  });
+      const user = await userRepository.findOne({ where: { uname }, select: ['id','uname','password']  });
+      console.log(user)
   
       if (!user) {
         // ユーザーが存在しない場合はログイン失敗として処理する
-        //res.status(401).json({ error: 'Invalid credentials' }).end();
         res.json({ status: 0 }).end();
         return;
       }
   
       if (user.password !== password) {
         // パスワードが一致しない場合もログイン失敗として処理する
-        //res.status(401).json({ error: 'Invalid credentials' }).end();
         res.json({ status: 0 }).end();
         return;
       }
   
       // ログイン成功時の処理をここに記述する
+      (req.session as any).user = user;
+      //console.log(req.session)
+      //sessionについて
+
+      //keyとともにredisにsession情報をValueとして保存
+
+      //秘密鍵でkeyを暗号化し、cookieとして送信
+
+      //ブラウザに暗号化したkeyを保存
+
   
       res.json({ status: 1 }).end();
     } catch (error) {
@@ -131,6 +188,16 @@ dataSource.initialize().then(() => {
     }
   });
 
+  //sessionが成功してるかどうか
+  app.get('/session', (req, res) => {
+    const user = (req.session as any).user; // セッションからユーザー情報を取得
+    //console.log(req.session);
+    if (user) {
+      res.json({ login_session_status: 1 }).end();
+    } else {
+      res.json({ login_session_status: 0 }).end();
+    }
+  });
   const port = env.SERVER_PORT;
   app.listen(port, () => {
     console.log(`Example app listening on port ${port}`);
