@@ -18,6 +18,7 @@ import cors from 'cors';
 
 //動画受け取り用
 import multer from 'multer';
+import { Video } from './entity/Video';
 
 // multerの設定
 const upload = multer({
@@ -221,7 +222,7 @@ app.use(
     const currentTime = new Date().getTime();
     
     //pathを作成
-    const path = 'video.mp4_'+currentTime; // 保存先のS3パスやファイル名を適宜変更してください
+    const path = 'video_'+currentTime+".mp4"; // 保存先のS3パスやファイル名を適宜変更してください
   
     try {
       if (!req.file) {
@@ -236,11 +237,39 @@ app.use(
         Body: req.file.buffer, // req.file.buffer() を使用する
       };
       await s3Client.send(new PutObjectCommand(uploadParams));
-  
-      res.json({ status: 1 }).end();
+      
+      //アップロードがうまくいったときの処理
+      const videoRepository = dataSource.getRepository(Video);
+      try {
+        const video = new Video()
+        video.URL=path;
+        video.title = req.body.title;
+        video.description = req.body.description;
+        const user = (req.session as any).user; // セッションからユーザー情報を取得
+        video.user=user
+    
+        // エンティティをデータベースに保存
+        await dataSource.manager.save(video);
+    
+      } catch (error) {
+        console.error(error);
+        //res.status(500).json({ error: 'Failed to save user' }).end();
+        res.json({ status: 0 }).end();
+      }
     } catch (error) {
       console.error(error);
       res.json({ status: 0 }).end();
+    }
+  });
+  //Video一覧
+  app.get('/VideoIndex', async (req, res) => {
+    try {
+      const videoRepository = dataSource.getRepository(Video);
+      const videos = await videoRepository.find();
+      res.json({ videos: videos }).end();
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Failed to fetch videos' }).end();
     }
   });
 })
