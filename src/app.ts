@@ -10,11 +10,22 @@ import { Redis } from 'ioredis';
 import  session  from "express-session";
 import connectRedis from "connect-redis";
 
-import { HeadObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { HeadObjectCommand, S3Client,PutObjectCommand } from '@aws-sdk/client-s3';
 import { User } from './entity/User';
 import { isLeepYear } from './sample';
 
 import cors from 'cors';
+
+//動画受け取り用
+import multer from 'multer';
+
+// multerの設定
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 最大ファイルサイズ (10MB)
+  },
+});
 
 const publicDir = __dirname + '/../public/';
 
@@ -38,12 +49,13 @@ const s3Client = new S3Client({
   forcePathStyle: !!env.S3_ENDPOINT, // S3ローカルモック使用時はtrue
 });
 
+const allowedOrigins = ['http://localhost:3000','http://localhost:3001']; // クライアントのホスト名を追加
 dataSource.initialize().then(() => {
   const app = express();
   //CORSの許可
   app.use(cors({
     credentials: true,
-    origin:"http://localhost:3001"
+    origin: allowedOrigins,
   }
   ));
 
@@ -167,7 +179,6 @@ app.use(
         res.json({ status: 0 }).end();
         return;
       }
-  
       // ログイン成功時の処理をここに記述する
       (req.session as any).user = user;
       //console.log(req.session)
@@ -178,7 +189,7 @@ app.use(
       //秘密鍵でkeyを暗号化し、cookieとして送信
 
       //ブラウザに暗号化したkeyを保存
-
+      
   
       res.json({ status: 1 }).end();
     } catch (error) {
@@ -193,13 +204,43 @@ app.use(
     const user = (req.session as any).user; // セッションからユーザー情報を取得
     //console.log(req.session);
     if (user) {
-      res.json({ login_session_status: 1 }).end();
+      res.json({ login_session_status: true }).end();
     } else {
-      res.json({ login_session_status: 0 }).end();
+      res.json({ login_session_status: false }).end();
     }
   });
   const port = env.SERVER_PORT;
   app.listen(port, () => {
     console.log(`Example app listening on port ${port}`);
+  });
+
+  //画像上げるよう
+  app.post('/videoUpload', upload.single('video'), async (req, res) => {
+    const bucket = env.S3_BUCKET;
+    // 現在の時間を取得
+    const currentTime = new Date().getTime();
+    
+    //pathを作成
+    const path = 'video.mp4_'+currentTime; // 保存先のS3パスやファイル名を適宜変更してください
+  
+    try {
+      if (!req.file) {
+        // ファイルがアップロードされていない場合の処理
+        res.json({ status: 0 }).end();
+        return;
+      }
+  
+      const uploadParams = {
+        Bucket: bucket,
+        Key: path,
+        Body: req.file.buffer, // req.file.buffer() を使用する
+      };
+      await s3Client.send(new PutObjectCommand(uploadParams));
+  
+      res.json({ status: 1 }).end();
+    } catch (error) {
+      console.error(error);
+      res.json({ status: 0 }).end();
+    }
   });
 })
