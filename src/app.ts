@@ -16,6 +16,10 @@ import { isLeepYear } from './sample';
 
 import cors from 'cors';
 
+//動画受け取り用
+import { createWriteStream,createReadStream,unlink } from 'fs';
+import { PutObjectCommand } from '@aws-sdk/client-s3';
+
 const publicDir = __dirname + '/../public/';
 
 const dataSource = new DataSource({
@@ -38,12 +42,13 @@ const s3Client = new S3Client({
   forcePathStyle: !!env.S3_ENDPOINT, // S3ローカルモック使用時はtrue
 });
 
+const allowedOrigins = ['http://localhost:3000','http://localhost:3001']; // クライアントのホスト名を追加
 dataSource.initialize().then(() => {
   const app = express();
   //CORSの許可
   app.use(cors({
     credentials: true,
-    origin:"http://localhost:3001"
+    origin: allowedOrigins,
   }
   ));
 
@@ -167,7 +172,6 @@ app.use(
         res.json({ status: 0 }).end();
         return;
       }
-  
       // ログイン成功時の処理をここに記述する
       (req.session as any).user = user;
       //console.log(req.session)
@@ -178,7 +182,7 @@ app.use(
       //秘密鍵でkeyを暗号化し、cookieとして送信
 
       //ブラウザに暗号化したkeyを保存
-
+      
   
       res.json({ status: 1 }).end();
     } catch (error) {
@@ -193,13 +197,52 @@ app.use(
     const user = (req.session as any).user; // セッションからユーザー情報を取得
     //console.log(req.session);
     if (user) {
-      res.json({ login_session_status: 1 }).end();
+      res.json({ login_session_status: true }).end();
     } else {
-      res.json({ login_session_status: 0 }).end();
+      res.json({ login_session_status: false }).end();
     }
   });
   const port = env.SERVER_PORT;
   app.listen(port, () => {
     console.log(`Example app listening on port ${port}`);
   });
+
+  //画像上げるよう
+  app.post('/videoUpload', async(req,res)=>{
+    // const bucket = env.S3_BUCKET;
+    // const path = 'video.mp4'; // 保存先のS3パスやファイル名を適宜変更してください
+
+    // // 受け取った動画データを一時的なファイルとして保存します
+    // const videoData = req.body.videoData; // リクエストボディから動画データを取得してください
+    // console.log(req)
+    // const tempFilePath = '/path/to/temp/video.mp4'; // 一時ファイルの保存パスを適宜設定してください
+    // console.log("うまくいってるよ～～")
+    // const writeStream = createWriteStream(tempFilePath);
+    // console.log(videoData)
+    // writeStream.write(videoData);
+
+    // writeStream.end();
+
+    // try {
+    //   // S3に動画データをアップロードします
+    //   const uploadParams = {
+    //     Bucket: bucket,
+    //     Key: path,
+    //     Body: createReadStream(tempFilePath),
+    //   };
+    //   await s3Client.send(new PutObjectCommand(uploadParams));
+
+    //   // アップロードが成功した場合の処理を記述してください
+    //   res.json({ status: 1 }).end();
+    // } catch (error) {
+    //   console.error(error);
+    //   // アップロードが失敗した場合の処理を記述してください
+    //   res.json({ status: 0 }).end();
+    // } finally {
+    //   // 一時ファイルを削除します
+    //   unlink(tempFilePath, (err) => {
+    //     if (err) console.error(err);
+    //   });
+    // }
+  })
 })
