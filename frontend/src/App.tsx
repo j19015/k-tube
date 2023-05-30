@@ -6,6 +6,7 @@ import { PassThrough } from 'stream';
 import { Sign } from 'crypto';
 import userEvent from '@testing-library/user-event';
 import UploadVideoForm from './VideoUpload';
+import VideoIndex from './VideoIndex';
 
 interface Data {
   status: boolean;
@@ -106,6 +107,7 @@ function App() {
         <>
           <p>video一覧</p>
           <UploadVideoForm></UploadVideoForm>
+          <VideoIndex></VideoIndex>
         </>
       ) : (
         !sign_status ? (

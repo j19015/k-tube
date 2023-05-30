@@ -3,6 +3,8 @@ import axios from 'axios';
 
 const UploadVideoForm = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -14,10 +16,13 @@ const UploadVideoForm = () => {
     try {
       const formData = new FormData();
       formData.append('video', selectedFile as File);
+      formData.append('title', title);
+      formData.append('description', description);
 
       await fetch('http://localhost:3000/videoUpload', {
         method: 'POST',
         body: formData,
+        credentials: 'include'
       });
 
       // アップロード成功の処理
@@ -30,7 +35,22 @@ const UploadVideoForm = () => {
 
   return (
     <div>
-      <input type="file" onChange={handleFileChange} />
+      タイトル:
+      <input
+        type="text"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+      /><br></br>
+      概要:
+      <input
+        type="text"
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+      /><br></br>
+      <input 
+        type="file" 
+        onChange={handleFileChange} 
+      /><br></br>
       <button onClick={handleUpload}>動画をアップロード</button>
     </div>
   );
