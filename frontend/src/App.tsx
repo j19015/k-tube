@@ -5,6 +5,7 @@ import { useState,useEffect } from 'react';
 import { PassThrough } from 'stream';
 import { Sign } from 'crypto';
 import userEvent from '@testing-library/user-event';
+import UploadVideoForm from './VideoUpload';
 
 interface Data {
   status: boolean;
@@ -27,21 +28,9 @@ function App() {
   //falseの時はセッション情報がない,trueの時はセッション情報がある。
   const [session_status,setSession_status]=useState(false);
 
-  // const session_confirm = async () => {
-  //   try {
-  //     const res: Response = await fetch("http://localhost:3000/session");
-  //     const data: Data = await res.json();
-  //     return data.login_session_status;
-  //   } catch (error) {
-  //     console.log(error);
-  //     return null;
-  //   }
-  // };
 
-  // // ページにアクセスしてきた時に実行
-  // session_confirm().then((status) => {
-  //   setSession_status(status !== null ? false : true);
-  // });
+
+
   useEffect(() => {
     const session_confirm = async () => {
       try {
@@ -64,6 +53,9 @@ function App() {
 
     fetchData();
   });
+
+
+
 
   //sign_up
   const signup=async()=>{
@@ -108,7 +100,10 @@ function App() {
   return (
     <div className="App">
       {session_status ? (
-        <p>video一覧</p>
+        <>
+          <p>video一覧</p>
+          <UploadVideoForm></UploadVideoForm>
+        </>
       ) : (
         sign_status ? (
           <>
