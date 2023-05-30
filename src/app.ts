@@ -10,15 +10,22 @@ import { Redis } from 'ioredis';
 import  session  from "express-session";
 import connectRedis from "connect-redis";
 
-import { HeadObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { HeadObjectCommand, S3Client,PutObjectCommand } from '@aws-sdk/client-s3';
 import { User } from './entity/User';
 import { isLeepYear } from './sample';
 
 import cors from 'cors';
 
 //動画受け取り用
-import { createWriteStream,createReadStream,unlink } from 'fs';
-import { PutObjectCommand } from '@aws-sdk/client-s3';
+import multer from 'multer';
+
+// multerの設定
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 最大ファイルサイズ (10MB)
+  },
+});
 
 const publicDir = __dirname + '/../public/';
 
@@ -208,41 +215,32 @@ app.use(
   });
 
   //画像上げるよう
-  app.post('/videoUpload', async(req,res)=>{
-    // const bucket = env.S3_BUCKET;
-    // const path = 'video.mp4'; // 保存先のS3パスやファイル名を適宜変更してください
-
-    // // 受け取った動画データを一時的なファイルとして保存します
-    // const videoData = req.body.videoData; // リクエストボディから動画データを取得してください
-    // console.log(req)
-    // const tempFilePath = '/path/to/temp/video.mp4'; // 一時ファイルの保存パスを適宜設定してください
-    // console.log("うまくいってるよ～～")
-    // const writeStream = createWriteStream(tempFilePath);
-    // console.log(videoData)
-    // writeStream.write(videoData);
-
-    // writeStream.end();
-
-    // try {
-    //   // S3に動画データをアップロードします
-    //   const uploadParams = {
-    //     Bucket: bucket,
-    //     Key: path,
-    //     Body: createReadStream(tempFilePath),
-    //   };
-    //   await s3Client.send(new PutObjectCommand(uploadParams));
-
-    //   // アップロードが成功した場合の処理を記述してください
-    //   res.json({ status: 1 }).end();
-    // } catch (error) {
-    //   console.error(error);
-    //   // アップロードが失敗した場合の処理を記述してください
-    //   res.json({ status: 0 }).end();
-    // } finally {
-    //   // 一時ファイルを削除します
-    //   unlink(tempFilePath, (err) => {
-    //     if (err) console.error(err);
-    //   });
-    // }
-  })
+  app.post('/videoUpload', upload.single('video'), async (req, res) => {
+    const bucket = env.S3_BUCKET;
+    // 現在の時間を取得
+    const currentTime = new Date().getTime();
+    
+    //pathを作成
+    const path = 'video.mp4_'+currentTime; // 保存先のS3パスやファイル名を適宜変更してください
+  
+    try {
+      if (!req.file) {
+        // ファイルがアップロードされていない場合の処理
+        res.json({ status: 0 }).end();
+        return;
+      }
+  
+      const uploadParams = {
+        Bucket: bucket,
+        Key: path,
+        Body: req.file.buffer, // req.file.buffer() を使用する
+      };
+      await s3Client.send(new PutObjectCommand(uploadParams));
+  
+      res.json({ status: 1 }).end();
+    } catch (error) {
+      console.error(error);
+      res.json({ status: 0 }).end();
+    }
+  });
 })
