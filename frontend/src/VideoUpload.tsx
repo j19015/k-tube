@@ -1,5 +1,6 @@
 import React, { useState, ChangeEvent } from 'react';
-import axios from 'axios';
+import './App.css'
+import back_icon from "back.png"
 
 const UploadVideoForm = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -29,10 +30,17 @@ const UploadVideoForm = () => {
   };
 
   return (
-    <div>
-      <input type="file" onChange={handleFileChange} />
-      <button onClick={handleUpload}>動画をアップロード</button>
+    <>
+    <header>
+      <img src={back_icon}/>
+    </header>
+    <div className="main">
+      <h1>動画アップロード</h1>
+
+      <input type="file" className="form-control" onChange={handleFileChange} />
+      <button className="btn" onClick={handleUpload}>動画をアップロード</button>
     </div>
+    </>
   );
 };
 

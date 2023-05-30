@@ -1,7 +1,7 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
-import { useState,useEffect } from 'react';
+import { useState,useEffect,Fragment } from 'react';
 import { PassThrough } from 'stream';
 import { Sign } from 'crypto';
 import userEvent from '@testing-library/user-event';
@@ -27,6 +27,10 @@ function App() {
   // session
   //falseの時はセッション情報がない,trueの時はセッション情報がある。
   const [session_status,setSession_status]=useState(false);
+
+  // trueの時は登録画面,falseの時はログイン画面
+  const [move_upload,setMove_upload]=useState(false);
+
 
 
   const changeSignStatus=()=>{
@@ -98,14 +102,23 @@ function App() {
       console.log(e);
     }
   }
+
+  const upload = () => {
+    setMove_upload(true);
+  }
   
 
   return (
     <div className="App">
       {session_status ? (
         <>
-          <p>video一覧</p>
-          <UploadVideoForm></UploadVideoForm>
+        {/* ログイン後に表示される画面 */}
+          {!move_upload &&
+          <button onClick={upload}>動画をアップロードする</button>
+          }
+
+         {/* 「動画をアップロードする」ボタンを押した後  */}
+          {move_upload && <UploadVideoForm></UploadVideoForm>}
         </>
       ) : (
         !sign_status ? (

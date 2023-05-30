@@ -28,6 +28,27 @@
   color: #61dafb;
 }
 
+.btn {
+  display: block;
+	text-align: center;
+	text-decoration: none;
+	width: 150px;
+	margin: 30px auto;
+	padding: 10px;
+	font-weight: bold;
+	border: 2px solid orange;
+	background: orange;
+	color: #fff;
+	transition: 0.5s;
+}
+.btn:hover {
+	color: orange;
+	background: #fff;
+}
+
+
+
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
