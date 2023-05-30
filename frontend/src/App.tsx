@@ -29,6 +29,9 @@ function App() {
   const [session_status,setSession_status]=useState(false);
 
 
+  const changeSignStatus=()=>{
+    setSign_status(!sign_status)
+  }
 
 
   useEffect(() => {
@@ -105,17 +108,23 @@ function App() {
           <UploadVideoForm></UploadVideoForm>
         </>
       ) : (
-        sign_status ? (
+        !sign_status ? (
           <>
             uname: <input value={uname} onChange={e => setUname(e.target.value)}></input><br />
             password: <input value={password} onChange={e => setPassword(e.target.value)}></input><br />
             <button onClick={signin}>ログイン</button>
+            <div>
+              <button onClick={changeSignStatus}>登録ページへ</button>
+            </div>
           </>
         ) : (
           <>
             uname: <input value={uname} onChange={e => setUname(e.target.value)}></input><br />
             password: <input value={password} onChange={e => setPassword(e.target.value)}></input><br />
             <button onClick={signup}>登録</button>
+            <div>
+              <button onClick={changeSignStatus}>ログインページへ</button>
+            </div>
           </>
         )
       )}
