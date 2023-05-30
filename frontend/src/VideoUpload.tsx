@@ -1,6 +1,6 @@
 import React, { useState, ChangeEvent } from 'react';
 import './App.css'
-import back_icon from "back.png"
+
 
 const UploadVideoForm = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -32,7 +32,7 @@ const UploadVideoForm = () => {
   return (
     <>
     <header>
-      <img src={back_icon}/>
+
     </header>
     <div className="main">
       <h1>動画アップロード</h1>
