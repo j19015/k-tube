@@ -13,7 +13,7 @@ const UploadVideoForm = () => {
   const handleUpload = async () => {
     try {
       const formData = new FormData();
-      formData.append('video', selectedFile as any);
+      formData.append('video', selectedFile as File);
 
       await fetch('http://localhost:3000/videoUpload', {
         method: 'POST',
