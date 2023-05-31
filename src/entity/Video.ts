@@ -15,6 +15,9 @@ export class Video {
   @Column()
   description!: string;
 
+  @Column()
+  user_id!: number;
+
   @ManyToOne(() => User)
   @JoinColumn({ name: 'user_id' })
   user!: User;
