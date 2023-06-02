@@ -205,7 +205,7 @@ app.use(
     const user = (req.session as any).user; // セッションからユーザー情報を取得
     //console.log(req.session);
     if (user) {
-      res.json({ login_session_status: true }).end();
+      res.json({ login_session_status: true,user_id: user.id }).end();
     } else {
       res.json({ login_session_status: false }).end();
     }
@@ -272,4 +272,24 @@ app.use(
       res.status(500).json({ error: 'Failed to fetch videos' }).end();
     }
   });
+
+  app.delete("/VideoDelete",async(req,res)=>{
+    try {
+      const videoId = req.body.video_id;
+      const videoRepository = dataSource.getRepository(Video);
+      const video = await videoRepository.findOne({ where: { id: videoId } });
+      if (!video) {
+        res.json({ status: 0, message: "Video not found" }).end();
+        return;
+      }
+  
+      await videoRepository.remove(video);
+  
+      res.json({ status: 1, message: "Video deleted successfully" }).end();
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Failed to delete video" }).end();
+    }
+  });
+
 })
