@@ -1,5 +1,6 @@
 import React, { useState, ChangeEvent } from 'react';
-import axios from 'axios';
+import './App.css'
+
 
 const UploadVideoForm = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -52,7 +53,6 @@ const UploadVideoForm = () => {
         onChange={handleFileChange} 
       /><br></br>
       <button onClick={handleUpload}>動画をアップロード</button>
-
 
     </div>
   );
