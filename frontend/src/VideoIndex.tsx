@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { Typography, Box, Button, Card, CardContent, CardMedia,CardActions } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+
 
 interface Data {
   status: boolean;
@@ -93,58 +96,59 @@ const VideoIndex = () => {
 
   return (
     <div className="main">
-      {!video_show_status && video_show==null ?(
+      {!video_show_status && video_show == null ? (
         <>
-            <h1>動画一覧</h1>
-            <h2>ログインしているユーザIDは{session_user_id}です！</h2>
-            <p>再生したい動画をクリックしてください</p>
-            <ul>
-                {videos.map((video) => (
-                <li className="contents" key={video.id}>
-                    <div className="video">
-                        <video src={"http://localhost:9090/video-bucket/"+video.URL} controls width="100%"></video>
-                    </div>
-                    <div>
-                        <p>Title: {video.title}</p>
-                    </div>
-                    <div>
-                        <p>Description: {video.description}</p>
-                    </div>
-                    <div>
-                        <p>author: {video.user_id}</p>
-                    </div>
-                    <div>
-                        <button onClick={() => change_video_show(video)}>詳細へ</button>　
-                        {(session_user_id==video.user_id)&&<button onClick={() => delete_video(video)}>削除</button>}
-                    </div>
-                </li>
-                ))}
-            </ul>
+          <Typography variant="h4" sx={{mb:5,mt:5}} >動画一覧</Typography>
+          <Typography variant="h5" sx={{mb:5}}>ログインしているユーザIDは{session_user_id}です！</Typography>
+          <Typography paragraph>再生したい動画をクリックしてください</Typography>
+          <Box display="flex" justifyContent="center" flexWrap="wrap" gap="1rem">
+            {videos.map((video) => (
+              <Card key={video.id} sx={{ maxWidth: 345, marginLeft: 'auto', marginRight: 'auto' }}>
+                <CardMedia
+                  component="video"
+                  src={"http://localhost:9090/video-bucket/" + video.URL}
+                  controls
+                  width="100%"
+                />
+                <CardContent>
+                  <Typography variant="h6" gutterBottom>Title: {video.title}</Typography>
+                  <Typography variant="body1" gutterBottom>Description: {video.description}</Typography>
+                  <Typography variant="body2">Author: {video.user_id}</Typography>
+                </CardContent>
+                <CardActions>
+                  <Button onClick={() => change_video_show(video)} sx={{mr:'auto'}}>詳細へ</Button>
+                  {(session_user_id == video.user_id) && (
+                    <Button onClick={() => delete_video(video)} startIcon={<DeleteIcon />}  variant="contained">削除</Button>
+                  )}
+                </CardActions>
+              </Card>
+            ))}
+          </Box>
         </>
-      ):(
-        video_show &&(
-        <>
-            <h1>動画再生</h1>
-            <p>再生ボタンクリック</p>
-            <div className="video">
-                <video src={"http://localhost:9090/video-bucket/"+video_show.URL} controls width="100%"></video>
-            </div>
-            <div>
-                <p>Title: {video_show.title}</p>
-            </div>
-            <div>
-                <p>Description: {video_show.description}</p>
-            </div>
-            <div>
-                <p>author: {video_show.user_id}</p>
-            </div>
-            <div>
-                <button onClick={change_video_show_status}>一覧へ</button>
-            </div>
-        </>
+      ) : (
+        video_show && (
+          <>
+            <Typography variant="h4">動画再生</Typography>
+            <Typography paragraph>再生ボタンクリック</Typography>
+            <Card>
+              <CardMedia
+                  component="video"
+                  src={"http://localhost:9090/video-bucket/" + video_show.URL}
+                  controls
+                  width="100%"
+              />
+              <CardContent>
+                <Typography variant="h6">Title: {video_show.title}</Typography>
+                <Typography variant="body1">Description: {video_show.description}</Typography>
+                <Typography variant="body2">Author: {video_show.user_id}</Typography>
+              </CardContent>
+              <CardActions sx={{justifyContent:'center'}}>
+                <Button onClick={change_video_show_status} variant="contained" size="medium">一覧へ</Button>
+              </CardActions>
+            </Card>
+          </>
         )
-      )
-      }
+      )}
     </div>
   );
 };

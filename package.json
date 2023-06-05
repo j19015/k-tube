@@ -6,6 +6,10 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.300.0",
+    "@emotion/react": "^11.11.0",
+    "@emotion/styled": "^11.11.0",
+    "@mui/icons-material": "^5.11.16",
+    "@mui/material": "^5.13.3",
     "@types/connect-redis": "^0.0.20",
     "class-validator": "^0.14.0",
     "connect-redis": "^4.0.1",

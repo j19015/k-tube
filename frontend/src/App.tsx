@@ -1,21 +1,23 @@
 import React from 'react';
-import logo from './logo.svg';
+
+//App.cssをimport
 import './App.css';
+
+// 状態維持系
 import { useState,useEffect,Fragment } from 'react';
-import { PassThrough } from 'stream';
-import { Sign } from 'crypto';
-import userEvent from '@testing-library/user-event';
+
+//動画アップロード用form && ビデオ一覧の コンポーネントをimport
 import UploadVideoForm from './VideoUpload';
 import VideoIndex from './VideoIndex';
 
-interface Data {
-  status: boolean;
-  login_session_status: boolean;
-}
+//muiパッケージのimport
+import { Button, TextField, Typography, Grid, Box } from '@mui/material';
 
-interface Data2{
-  login_session_status: boolean;
-}
+//mui関連CSSまとめてimport
+import {AppContainer,FormContainer,ButtonContainer} from './mui'
+
+// interface
+import {Data,Data2} from './interface'
 
 function App() {
   // name
@@ -110,42 +112,78 @@ function App() {
   
 
   return (
-    <div className="App">
+    <>
+      <AppContainer>
       {session_status ? (
         <>
-          <p>video一覧</p>
-        {/* ログイン後に表示される画面 */}
-          {!move_upload &&
-          <button onClick={upload}>動画をアップロードする</button>
-          }
-
-         {/* 「動画をアップロードする」ボタンを押した後  */}
+          {!move_upload && (
+            <>
+              <Button variant="contained" onClick={upload} sx={{mb:5}}>
+                動画をアップロードする
+              </Button>
+            </>
+          )}
           {move_upload && <UploadVideoForm></UploadVideoForm>}
           <VideoIndex></VideoIndex>
         </>
       ) : (
-        !sign_status ? (
-          <>
-            uname: <input value={uname} onChange={e => setUname(e.target.value)}></input><br />
-            password: <input value={password} onChange={e => setPassword(e.target.value)}></input><br />
-            <button onClick={signin}>ログイン</button>
-            <div>
-              <button onClick={changeSignStatus}>登録ページへ</button>
-            </div>
-          </>
-        ) : (
-          <>
-            uname: <input value={uname} onChange={e => setUname(e.target.value)}></input><br />
-            password: <input value={password} onChange={e => setPassword(e.target.value)}></input><br />
-            <button onClick={signup}>登録</button>
-            <div>
-              <button onClick={changeSignStatus}>ログインページへ</button>
-            </div>
-          </>
-        )
+        <>
+        <Grid container direction="column" alignItems="center">
+          <Grid item>
+            {!sign_status ? (
+              <>
+                <Typography variant='h3' sx={{mb:5}}>ログイン画面</Typography>
+                <FormContainer>
+                  <TextField
+                    label="ユーザー名"
+                    value={uname}
+                    onChange={(e) => setUname(e.target.value)}
+                  />
+                  <TextField
+                    type="password"
+                    label="パスワード"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                  <ButtonContainer>
+                    <Button variant="contained" onClick={signin}>
+                      ログイン
+                    </Button>
+                    <Button onClick={changeSignStatus}>アカウント登録ページへ</Button>
+                  </ButtonContainer>
+                </FormContainer>
+              </>
+            ) : (
+                <>
+                  <Typography variant='h3' sx={{mb:5}}>アカウント登録画面</Typography>
+                  <FormContainer>
+                    <TextField
+                      label="ユーザー名"
+                      value={uname}
+                      onChange={(e) => setUname(e.target.value)}
+                    />
+                    <TextField
+                      type="password"
+                      label="パスワード"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                    />
+                    <ButtonContainer>
+                      <Button variant="contained" onClick={signup}>
+                        登録
+                      </Button>
+                      <Button onClick={changeSignStatus}>ログインページへ</Button>
+                    </ButtonContainer>
+                  </FormContainer>
+                </>
+            )}
+          </Grid>
+        </Grid>
+        </>
       )}
-      <p>{session_status}</p>
-    </div>
+      <Typography>{session_status}</Typography>
+    </AppContainer>
+    </>
   );
   
 }
