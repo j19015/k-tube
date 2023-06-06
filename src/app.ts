@@ -61,7 +61,7 @@ dataSource.initialize().then(() => {
   ));
 
   // RedisStoreの初期化
-  const RedisStore = connectRedis(session);
+  const RedisStore = require("connect-redis").default
 
 app.use(
   session({
