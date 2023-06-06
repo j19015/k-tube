@@ -1,4 +1,6 @@
 import React, { useState, ChangeEvent } from 'react';
+import { Button, TextField, Typography,Box } from '@mui/material';
+import SendIcon from '@mui/icons-material/Send';
 import './App.css'
 
 
@@ -35,26 +37,33 @@ const UploadVideoForm = () => {
   };
 
   return (
-    <div>
-      タイトル:
-      <input
-        type="text"
+    <>
+      <Typography variant="h6">Video一覧</Typography>
+      <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: '1rem',
+        margin: '2rem',
+      }}
+      >
+      <TextField
+        label="タイトル"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
-      /><br></br>
-      概要:
-      <input
-        type="text"
+      />
+      <TextField
+        label="概要"
         value={description}
         onChange={(e) => setDescription(e.target.value)}
-      /><br></br>
-      <input 
-        type="file" 
-        onChange={handleFileChange} 
-      /><br></br>
-      <button onClick={handleUpload}>動画をアップロード</button>
-
-    </div>
+      />
+      <input type="file" onChange={handleFileChange} />
+      <Button variant="contained" onClick={handleUpload} endIcon={<SendIcon />}>
+        アップロード
+      </Button>
+    </Box>
+    </>
   );
 };
 

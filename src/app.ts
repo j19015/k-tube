@@ -61,7 +61,7 @@ dataSource.initialize().then(() => {
   ));
 
   // RedisStoreの初期化
-  const RedisStore = connectRedis(session);
+  const RedisStore = require("connect-redis").default
 
 app.use(
   session({
@@ -263,6 +263,7 @@ app.use(
   });
   //Video一覧
   app.get('/VideoIndex', async (req, res) => {
+    deleteVideosWithMissingS3Data()
     try {
       const videoRepository = dataSource.getRepository(Video);
       const videos = await videoRepository.find();
@@ -291,5 +292,38 @@ app.use(
       res.status(500).json({ error: "Failed to delete video" }).end();
     }
   });
+
+  // S3上のビデオデータをチェックして、存在しないものをデータベースから削除する関数
+  async function deleteVideosWithMissingS3Data() {
+    const videoRepository = dataSource.getRepository(Video);
+    const videos = await videoRepository.find();
+
+    for (const video of videos) {
+      try {
+        const bucket = env.S3_BUCKET;
+        const s3Key = video.URL; // ビデオのS3キーを取得
+        const s3Client = new S3Client({
+          region: env.S3_REGION,
+          endpoint: env.S3_ENDPOINT,
+          forcePathStyle: !!env.S3_ENDPOINT,
+        });
+    
+        // ビデオのS3オブジェクトのメタデータを取得し、存在するかどうかを確認する
+        await s3Client.send(new HeadObjectCommand({
+          Bucket: bucket,
+          Key: s3Key,
+        }));
+
+        // S3オブジェクトが存在する場合はスキップ
+        continue;
+      } catch (error) {
+        // ビデオのS3オブジェクトが存在しない場合はデータベースから削除する
+        await videoRepository.remove(video);
+        console.log(`Deleted video ID: ${video.id}`);
+      }
+    }
+
+    console.log('Finished deleting videos with missing S3 data');
+  }
 
 })
