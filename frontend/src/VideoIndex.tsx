@@ -108,7 +108,7 @@ const VideoIndex = () => {
               <Card key={video.id} sx={{ maxWidth: 345, marginLeft: 'auto', marginRight: 'auto' }}>
                 <CardMedia
                   component="video"
-                  src={`${S3Url}/video-bucket/` + video.URL}
+                  src={`${S3Url}/` + video.URL}
                   controls
                   width="100%"
                 />
@@ -135,7 +135,7 @@ const VideoIndex = () => {
             <Card>
               <CardMedia
                   component="video"
-                  src={`${S3Url}/video-bucket/` + video_show.URL}
+                  src={`${S3Url}/` + video_show.URL}
                   controls
                   width="100%"
               />

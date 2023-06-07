@@ -14,8 +14,9 @@ COPY tsconfig.json ./
 COPY src src
 RUN npm run build
 
+ENV CORS_ORIGIN = true
 ENV REACT_APP_CLIENT_URL="https://hayashida.ng-training.vcube.net"
-ENV REACT_APP_S3_ENDPOINT="s3://arn:aws:s3:ap-northeast-1:986037367559:accesspoint/hayashida-access-point"
+ENV REACT_APP_S3_ENDPOINT="https://hayashida-bucket.s3.ap-northeast-1.amazonaws.com/1/hayashida-bucket"
 
 # フロントエンドのビルド
 COPY frontend frontend
