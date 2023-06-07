@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Typography, Box, Button, Card, CardContent, CardMedia,CardActions } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
+const clientUrl = process.env.REACT_APP_CLIENT_URL;
+const S3Url=process.env.REACT_APP_S3_ENDPOINT
 
 
 interface Data {
@@ -31,7 +33,7 @@ const VideoIndex = () => {
 
   const session_confirm = async () => {
     try {
-      const res: Response = await fetch("http://localhost:3000/session",{
+      const res: Response = await fetch(`${clientUrl}/session`,{
         credentials: "include"
       });
       const data: Data2 = await res.json();
@@ -61,7 +63,7 @@ const VideoIndex = () => {
 
   const delete_video=async(video: video)=>{
     try{
-      const res=await fetch("http://localhost:3000/VideoDelete",{
+      const res=await fetch(`${clientUrl}/VideoDelete`,{
         credentials: "include",
         method: "DELETE",
           headers: {
@@ -82,7 +84,7 @@ const VideoIndex = () => {
   const fetchVideos = async () => {
     console.log("動画を取得しました")
     try {
-      const response = await fetch('http://localhost:3000/VideoIndex');
+      const response = await fetch(`${clientUrl}/VideoIndex`);
       const data = await response.json();
       if (response.ok) {
         setVideos(data.videos);
@@ -106,7 +108,7 @@ const VideoIndex = () => {
               <Card key={video.id} sx={{ maxWidth: 345, marginLeft: 'auto', marginRight: 'auto' }}>
                 <CardMedia
                   component="video"
-                  src={"http://localhost:9090/video-bucket/" + video.URL}
+                  src={`${S3Url}/video-bucket/` + video.URL}
                   controls
                   width="100%"
                 />
@@ -133,7 +135,7 @@ const VideoIndex = () => {
             <Card>
               <CardMedia
                   component="video"
-                  src={"http://localhost:9090/video-bucket/" + video_show.URL}
+                  src={`${S3Url}:9090/video-bucket/` + video_show.URL}
                   controls
                   width="100%"
               />

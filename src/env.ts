@@ -18,3 +18,6 @@ export const REDIS_DB = Number(process.env["REDIS_DB"]) || 0;
 export const S3_REGION = process.env["S3_REGION"] || "ap-northeast-1";
 export const S3_BUCKET = process.env["S3_BUCKET"] || "S3_BUCKET";
 export const S3_ENDPOINT = process.env["S3_ENDPOINT"]; // ローカルモック用
+
+//デプロイ用
+export const CLIENT_URL = process.env["CLIENT_URL"];

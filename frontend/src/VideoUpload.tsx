@@ -2,7 +2,7 @@ import React, { useState, ChangeEvent } from 'react';
 import { Button, TextField, Typography,Box } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import './App.css'
-
+const clientUrl = process.env.REACT_APP_CLIENT_URL;
 
 const UploadVideoForm = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -22,7 +22,7 @@ const UploadVideoForm = () => {
       formData.append('title', title);
       formData.append('description', description);
 
-      await fetch('http://localhost:3000/videoUpload', {
+      await fetch(`${clientUrl}/videoUpload`, {
         method: 'POST',
         body: formData,
         credentials: 'include'
