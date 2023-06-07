@@ -33,6 +33,8 @@ services:
     environment:
       - CHOKIDAR_USEPOLLING=true #ホットリロードを行う設定
       - CORS_ORIGIN=http://localhost:3000 #CORS用
+      - REACT_APP_CLIENT_URL=http://localhost:3000
+      - REACT_APP_S3_ENDPOINT=http://localhost:9090/video-bucket
   db:
     image: "postgres:15-alpine"
     ports:

@@ -19,6 +19,9 @@ import {AppContainer,FormContainer,ButtonContainer} from './mui'
 // interface
 import {Data,Data2} from './interface'
 
+
+const clientUrl = process.env.REACT_APP_CLIENT_URL;
+
 function App() {
   // name
   const [uname,setUname]=useState("");
@@ -44,7 +47,7 @@ function App() {
   useEffect(() => {
     const session_confirm = async () => {
       try {
-        const res: Response = await fetch("http://localhost:3000/session",{
+        const res: Response = await fetch(`${clientUrl}/session`,{
           credentials: "include"
         });
         const data: Data2 = await res.json();
@@ -62,7 +65,7 @@ function App() {
     };
 
     fetchData();
-  });
+  },[]);
 
 
 
@@ -70,7 +73,7 @@ function App() {
   //sign_up
   const signup=async()=>{
     try{
-      const res: Response = await fetch("http://localhost:3000/signup",{
+      const res: Response = await fetch(`${clientUrl}/signup`,{
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -88,7 +91,7 @@ function App() {
   //sign_in
   const signin=async()=>{
     try{
-      const res: Response = await fetch("http://localhost:3000/signin",{
+      const res: Response = await fetch(`${clientUrl}/signin`,{
         method: "POST",
         headers: {
           "Content-Type": "application/json",
