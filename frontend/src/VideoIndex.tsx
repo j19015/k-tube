@@ -135,7 +135,7 @@ const VideoIndex = () => {
             <Card>
               <CardMedia
                   component="video"
-                  src={`${S3Url}:9090/video-bucket/` + video_show.URL}
+                  src={`${S3Url}/video-bucket/` + video_show.URL}
                   controls
                   width="100%"
               />
