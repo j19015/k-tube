@@ -14,7 +14,7 @@ import UploadVideoForm from './VideoUpload';
 import VideoIndex from './VideoIndex';
 
 //muiパッケージのimport
-import { Button, TextField, Typography, Grid, Box } from '@mui/material';
+import { Button, TextField, Typography, Grid, Box,Snackbar } from '@mui/material';
 
 //mui関連CSSまとめてimport
 import {AppContainer,FormContainer,ButtonContainer} from './mui'
@@ -44,10 +44,20 @@ function App() {
   const [unameerror, setUnameerror]=useState(false);
   const [passworderror, setPassworderror]=useState(false);
 
+  //backendバリデーション
+  const [backend_error, setBackendrror]=useState("");
+
+  //snackbar用 signup
+  const [errorPopup, setErrorPopup] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+
 
   const changeSignStatus=()=>{
     setSign_status(!sign_status)
   }
+  const handleSnackbarClose = () => {
+    setErrorPopup(false);
+  };
 
   useEffect(() => {
     const session_confirm = async () => {
@@ -85,7 +95,9 @@ function App() {
         credentials: 'include'
       });
       const data: Data = await res.json();
-      console.log(data.status);
+      console.log(data.message);
+      setBackendrror(data.message);
+      setErrorPopup(true);
     }catch(e){
       console.log(e);
     }
@@ -106,6 +118,8 @@ function App() {
       console.log(data.status);
       if(data.status as any==1){
         setSession_status(true);
+      }else{
+        setErrorPopup(true);
       }
     }catch(e){
       console.log(e);
@@ -210,33 +224,63 @@ function App() {
                     <Button onClick={changeSignStatus}>アカウント登録ページへ</Button>
                   </ButtonContainer>
                 </FormContainer>
+                <Snackbar
+                open={errorPopup}
+                autoHideDuration={5000}
+                onClose={handleSnackbarClose}
+                message={
+                  <>
+                    ログインに失敗しました。
+                    <br />
+                    ユーザ名,パスワードを再確認してください
+                  </>
+                }
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'center',
+                }}
+              />
               </>
             ) : (
                 <>
-                  <Typography variant='h4' sx={{mb:5}}>アカウント登録</Typography>
-                  <FormContainer>
-                    <TextField
-                      label="ユーザー名"
-                      value={uname}
-                      onChange={(e) => setUname(e.target.value)}
-                    />
-                    {!unameerror && (<></>)}
-                    {unameerror && <p>{unameerrormessage}</p>}
-                    <TextField
-                      type="password"
-                      label="パスワード"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                    />
-                    {!passworderror && (<></>)}
-                    {passworderror && <p className="error">{passerrormessage}</p>}
-                    <ButtonContainer className='btn'>
+                  <Typography variant='h4' sx={{ mb: 5 }}>アカウント登録</Typography>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12}>
+                      <TextField
+                        label="ユーザー名"
+                        value={uname}
+                        onChange={(e) => setUname(e.target.value)}
+                        fullWidth
+                      />
+                      {unameerror && <Typography color="error">{unameerrormessage}</Typography>}
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                        type="password"
+                        label="パスワード"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        fullWidth
+                      />
+                      {passworderror && <Typography color="error">{passerrormessage}</Typography>}
+                    </Grid>
+                    <Grid item xs={12}>
                       <Button variant="contained" onClick={signup}>
                         登録
                       </Button>
                       <Button onClick={changeSignStatus}>ログインページへ</Button>
-                    </ButtonContainer>
-                  </FormContainer>
+                    </Grid>
+                  </Grid>
+                  <Snackbar
+                    open={errorPopup}
+                    autoHideDuration={5000}
+                    onClose={handleSnackbarClose}
+                    message={backend_error}
+                    anchorOrigin={{
+                      vertical: 'bottom',
+                      horizontal: 'center',
+                    }}
+                  />
                 </>
             )}
           </Grid>
