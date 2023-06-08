@@ -37,10 +37,11 @@ function Header(props: any){
                     {
                         session_status?(
                             <>
+                                <li className="header01-item">LoginUserID: {props.userId}</li>
                                 <button onClick={signout}>SignOut</button>
                             </>
                         ):(
-                            <>
+                            <>  
                                 <li className="header01-item"><button onClick={props.onSignInButtonClicked}>SignIn</button></li>
                                 <li className="header01-item"><button onClick={props.onSignUpButtonClicked}>SignUp</button></li>
                             </>

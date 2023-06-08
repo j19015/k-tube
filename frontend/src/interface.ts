@@ -6,5 +6,6 @@ export interface Data {
   
 export interface Data2{
     login_session_status: boolean;
-  }
+    user_id: number;
+}
   

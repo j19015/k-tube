@@ -2,6 +2,7 @@ import React from 'react';
 
 //コンポーネント
 import Header from './header/Header';
+import Footer from './Footer';
 
 //App.cssをimport
 import './App.css';
@@ -49,9 +50,9 @@ function App() {
 
   //snackbar用 signup
   const [errorPopup, setErrorPopup] = useState(false);
-  
-  // upload
-  const [update_status,setUpdate]=useState(true);
+
+  // ログインしているユーザーID
+  const [userId, setUserId] = useState(0);
 
   const changeSignStatus=()=>{
     setSign_status(!sign_status)
@@ -70,6 +71,7 @@ function App() {
         credentials: "include"
       });
       const data: Data2 = await res.json();
+      setUserId(data.user_id)
       console.log(data);
       return data.login_session_status;
     } catch (error) {
@@ -122,6 +124,7 @@ function App() {
       }else{
         setErrorPopup(true);
       }
+      session_confirm();
     }catch(e){
       console.log(e);
     }
@@ -187,6 +190,7 @@ function App() {
   return (
     <>
       <Header 
+        userId={userId}
         onChildStateChange={handleChildStateChange} 
         onChildSessionChange={handleChildSessionChange} 
         onUploadButtonClicked={() => {setMove_upload(!move_upload);} } 
@@ -205,7 +209,7 @@ function App() {
               </Button> */}
             </>
           )}
-          {move_upload && <UploadVideoForm onVideoUploadClicked={() => {setUpdate(!update_status)}}></UploadVideoForm>}
+          {move_upload && <UploadVideoForm></UploadVideoForm>}
           <VideoIndex></VideoIndex>
         </>
       ) : (
@@ -214,7 +218,7 @@ function App() {
           <Grid item>
             {!sign_status ? (
               <>
-                <Typography variant='h4' sx={{mb:5}}>ログイン画面</Typography>
+                <Typography variant='h4' sx={{mb:5}}>Sign In</Typography>
                 <FormContainer>
                   <TextField
                     label="ユーザー名"
@@ -256,7 +260,7 @@ function App() {
               </>
             ) : (
                 <>
-                  <Typography variant='h4' sx={{ mb: 5 }}>アカウント登録</Typography>
+                  <Typography variant='h4' sx={{ mb: 5 }}>Sign Up</Typography>
                   <Grid container spacing={2}>
                     <Grid item xs={12}>
                       <TextField
@@ -302,6 +306,7 @@ function App() {
       )}
       <Typography>{session_status}</Typography>
     </AppContainer>
+    <Footer></Footer>
     </>
   );
   

@@ -30,7 +30,6 @@ const UploadVideoForm = (props: any) => {
 
       // アップロード成功の処理
       console.log('動画がアップロードされました。',selectedFile);
-      props.onVideoUploadClicked()
     } catch (error) {
       // エラーの処理
       console.error('動画のアップロードに失敗しました。', error);
