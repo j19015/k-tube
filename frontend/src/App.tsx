@@ -49,8 +49,9 @@ function App() {
 
   //snackbar用 signup
   const [errorPopup, setErrorPopup] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
-
+  
+  // upload
+  const [update_status,setUpdate]=useState(true);
 
   const changeSignStatus=()=>{
     setSign_status(!sign_status)
@@ -204,7 +205,7 @@ function App() {
               </Button> */}
             </>
           )}
-          {move_upload && <UploadVideoForm></UploadVideoForm>}
+          {move_upload && <UploadVideoForm onVideoUploadClicked={() => {setUpdate(!update_status)}}></UploadVideoForm>}
           <VideoIndex></VideoIndex>
         </>
       ) : (

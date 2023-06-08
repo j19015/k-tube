@@ -263,14 +263,20 @@ app.use(
     
     //pathを作成
     const path = 'video_'+currentTime+".mp4"; // 保存先のS3パスやファイル名を適宜変更してください
-  
+
     try {
       if (!req.file) {
         // ファイルがアップロードされていない場合の処理
         res.json({ status: 0 }).end();
         return;
       }
-  
+
+      // アップロードされたファイルの拡張子がmp4でない場合はエラーを返す
+      if (req.file.mimetype !== 'video/mp4') {
+        res.json({ status: 0, message: 'アップロードされたファイルはMP4形式ではありません' }).end();
+        return;
+      }
+
       const uploadParams = {
         Bucket: bucket,
         Key: path,
@@ -293,7 +299,6 @@ app.use(
     
       } catch (error) {
         console.error(error);
-        //res.status(500).json({ error: 'Failed to save user' }).end();
         res.json({ status: 0 }).end();
       }
     } catch (error) {
@@ -301,6 +306,7 @@ app.use(
       res.json({ status: 0 }).end();
     }
   });
+
   //Video一覧
   app.get('/VideoIndex', async (req, res) => {
     deleteVideosWithMissingS3Data()

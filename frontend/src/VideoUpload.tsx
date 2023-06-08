@@ -4,7 +4,7 @@ import SendIcon from '@mui/icons-material/Send';
 import './App.css'
 const clientUrl = process.env.REACT_APP_CLIENT_URL;
 
-const UploadVideoForm = () => {
+const UploadVideoForm = (props: any) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -30,6 +30,7 @@ const UploadVideoForm = () => {
 
       // アップロード成功の処理
       console.log('動画がアップロードされました。',selectedFile);
+      props.onVideoUploadClicked()
     } catch (error) {
       // エラーの処理
       console.error('動画のアップロードに失敗しました。', error);
