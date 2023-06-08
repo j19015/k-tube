@@ -39,6 +39,7 @@ function App() {
 
   // trueの時は登録画面,falseの時はログイン画面
   const [move_upload,setMove_upload]=useState(false);
+
   //バリデーション
   const [unameerror, setUnameerror]=useState(false);
   const [passworderror, setPassworderror]=useState(false);
@@ -166,7 +167,7 @@ function App() {
 
   return (
     <>
-      <Header onChildStateChange={handleChildStateChange} onUploadButtonClicked={() => {setMove_upload(true);} }/>
+      <Header onChildStateChange={handleChildStateChange} onUploadButtonClicked={() => {setMove_upload(!move_upload);} }/>
       <AppContainer>
       {session_status ? (
         <>
