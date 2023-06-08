@@ -146,17 +146,32 @@ function App() {
     };
   }, [password]);
 
+
+  // ヘッダーからの画面切り替え
+  useEffect(() => {
+
+    return () => {
+      setPasserrormessage("英数字8文字以上で入力してください")
+    };
+  }, [password]);
+
+
+  //コールバック関数
+  const handleChildStateChange = (childState: any) => {
+    setSign_status(childState);
+  };
+
   return (
     <>
-      <Header />
+      <Header onChildStateChange={handleChildStateChange} onUploadButtonClicked={() => {setMove_upload(true);} }/>
       <AppContainer>
       {session_status ? (
         <>
           {!move_upload && (
             <>
-              <Button variant="contained" onClick={upload} sx={{mb:5}}>
+              {/* <Button variant="contained" onClick={upload} sx={{mb:5}}>
                 動画をアップロードする
-              </Button>
+              </Button> */}
             </>
           )}
           {move_upload && <UploadVideoForm></UploadVideoForm>}
