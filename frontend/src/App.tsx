@@ -1,5 +1,8 @@
 import React from 'react';
 
+//コンポーネント
+import Header from './header/Header';
+
 //App.cssをimport
 import './App.css';
 
@@ -37,12 +40,14 @@ function App() {
   // trueの時は登録画面,falseの時はログイン画面
   const [move_upload,setMove_upload]=useState(false);
 
+  //バリデーション
+  const [unameerror, setUnameerror]=useState(false);
+  const [passworderror, setPassworderror]=useState(false);
 
 
   const changeSignStatus=()=>{
     setSign_status(!sign_status)
   }
-
 
   useEffect(() => {
     const session_confirm = async () => {
@@ -66,8 +71,6 @@ function App() {
 
     fetchData();
   },[]);
-
-
 
 
   //sign_up
@@ -112,18 +115,67 @@ function App() {
   const upload = () => {
     setMove_upload(true);
   }
-  
+
+
+  const [unameerrormessage, setUnameerrormessage]=useState("");
+  const [passerrormessage, setPasserrormessage]=useState("");
+
+ // ユーザー名エラー
+  useEffect(() => {
+    if (uname.length>8){
+      setUnameerror(true);
+      console.error('入力は8文字以下にしてください')
+    }
+    else{
+      setUnameerror(false);
+    }
+
+    return () => {
+      setUnameerrormessage("ユーザー名が正しくありません")
+    };
+  }, [uname]);
+
+  // パスワード
+  useEffect(() => {
+    const regex = /^(?=.*[a-zA-Z])[a-zA-Z0-9]{8,}$/;
+    if (!regex.test(password)){
+      setPassworderror(true);
+      console.error('error')
+    } else{
+      setPassworderror(false);
+    }
+
+    return () => {
+      setPasserrormessage("英数字8文字以上で入力してください")
+    };
+  }, [password]);
+
+
+  // ヘッダーからの画面切り替え
+  useEffect(() => {
+
+    return () => {
+      setPasserrormessage("英数字8文字以上で入力してください")
+    };
+  }, [password]);
+
+
+  //コールバック関数
+  const handleChildStateChange = (childState: any) => {
+    setSign_status(childState);
+  };
 
   return (
     <>
+      <Header onChildStateChange={handleChildStateChange} onUploadButtonClicked={() => {setMove_upload(!move_upload);} }/>
       <AppContainer>
       {session_status ? (
         <>
           {!move_upload && (
             <>
-              <Button variant="contained" onClick={upload} sx={{mb:5}}>
+              {/* <Button variant="contained" onClick={upload} sx={{mb:5}}>
                 動画をアップロードする
-              </Button>
+              </Button> */}
             </>
           )}
           {move_upload && <UploadVideoForm></UploadVideoForm>}
@@ -131,23 +183,26 @@ function App() {
         </>
       ) : (
         <>
-        <Grid container direction="column" alignItems="center">
+        <Grid container direction="column" alignItems="center" className="signmain">
           <Grid item>
             {!sign_status ? (
               <>
-                <Typography variant='h3' sx={{mb:5}}>ログイン画面</Typography>
+                <Typography variant='h4' sx={{mb:5}}>ログイン画面</Typography>
                 <FormContainer>
                   <TextField
                     label="ユーザー名"
                     value={uname}
                     onChange={(e) => setUname(e.target.value)}
                   />
+              
+
                   <TextField
                     type="password"
                     label="パスワード"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                   />
+                  
                   <ButtonContainer>
                     <Button variant="contained" onClick={signin}>
                       ログイン
@@ -158,20 +213,24 @@ function App() {
               </>
             ) : (
                 <>
-                  <Typography variant='h3' sx={{mb:5}}>アカウント登録画面</Typography>
+                  <Typography variant='h4' sx={{mb:5}}>アカウント登録</Typography>
                   <FormContainer>
                     <TextField
                       label="ユーザー名"
                       value={uname}
                       onChange={(e) => setUname(e.target.value)}
                     />
+                    {!unameerror && (<></>)}
+                    {unameerror && <p>{unameerrormessage}</p>}
                     <TextField
                       type="password"
                       label="パスワード"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                     />
-                    <ButtonContainer>
+                    {!passworderror && (<></>)}
+                    {passworderror && <p className="error">{passerrormessage}</p>}
+                    <ButtonContainer className='btn'>
                       <Button variant="contained" onClick={signup}>
                         登録
                       </Button>

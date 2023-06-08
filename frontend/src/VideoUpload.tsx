@@ -38,7 +38,7 @@ const UploadVideoForm = () => {
 
   return (
     <>
-      <Typography variant="h6">Video一覧</Typography>
+      <Typography variant="h4">動画投稿</Typography>
       <Box
       sx={{
         display: 'flex',
