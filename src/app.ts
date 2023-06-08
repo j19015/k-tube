@@ -243,6 +243,18 @@ app.use(
     console.log(`Example app listening on port ${port}`);
   });
 
+  //ログアウト用
+  app.post('/signout', (req, res) => {
+    req.session.destroy((err) => {
+      if (err) {
+        console.error(err);
+        res.json({ status: 0, message: 'Failed to sign out' }).end();
+      } else {
+        res.json({ status: 1, message: 'Sign out successful' }).end();
+      }
+    });
+  });
+
   //画像上げるよう
   app.post('/videoUpload', upload.single('video'), async (req, res) => {
     const bucket = env.S3_BUCKET;
