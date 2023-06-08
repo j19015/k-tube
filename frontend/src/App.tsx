@@ -225,7 +225,6 @@ function App() {
                     value={uname}
                     onChange={(e) => setUname(e.target.value)}
                   />
-              
 
                   <TextField
                     type="password"
@@ -233,7 +232,7 @@ function App() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                   />
-                  
+
                   <ButtonContainer>
                     <Button variant="contained" onClick={signin}>
                       ログイン
@@ -242,67 +241,67 @@ function App() {
                   </ButtonContainer>
                 </FormContainer>
                 <Snackbar
-                open={errorPopup}
-                autoHideDuration={5000}
-                onClose={handleSnackbarClose}
-                message={
-                  <>
-                    ログインに失敗しました。
-                    <br />
-                    ユーザ名,パスワードを再確認してください
-                  </>
-                }
-                anchorOrigin={{
-                  vertical: 'bottom',
-                  horizontal: 'center',
-                }}
-              />
+                  open={errorPopup}
+                  autoHideDuration={5000}
+                  onClose={handleSnackbarClose}
+                  message={
+                    <>
+                      ログインに失敗しました。
+                      <br />
+                      ユーザ名,パスワードを再確認してください
+                    </>
+                  }
+                  anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'center',
+                  }}
+                />
               </>
             ) : (
-                <>
-                  <Typography variant='h4' sx={{ mb: 5 }}>Sign Up</Typography>
-                  <Grid container spacing={2}>
-                    <Grid item xs={12}>
-                      <TextField
-                        label="ユーザー名"
-                        value={uname}
-                        onChange={(e) => setUname(e.target.value)}
-                        fullWidth
-                      />
-                      {unameerror && <Typography color="error">{unameerrormessage}</Typography>}
-                    </Grid>
-                    <Grid item xs={12}>
-                      <TextField
-                        type="password"
-                        label="パスワード"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        fullWidth
-                      />
-                      {passworderror && <Typography color="error">{passerrormessage}</Typography>}
-                    </Grid>
-                    <Grid item xs={12}>
-                      <Button variant="contained" onClick={signup}>
-                        登録
-                      </Button>
-                      <Button onClick={changeSignStatus}>ログインページへ</Button>
-                    </Grid>
+              <>
+                <Typography variant='h4' sx={{ mb: 5 }}>Sign Up</Typography>
+                <Grid container spacing={2}>
+                  <Grid item xs={12}>
+                    <TextField
+                      label="ユーザー名"
+                      value={uname}
+                      onChange={(e) => setUname(e.target.value)}
+                      fullWidth
+                    />
+                    {unameerror && <Typography color="error">{unameerrormessage}</Typography>}
                   </Grid>
-                  <Snackbar
-                    open={errorPopup}
-                    autoHideDuration={5000}
-                    onClose={handleSnackbarClose}
-                    message={backend_error}
-                    anchorOrigin={{
-                      vertical: 'bottom',
-                      horizontal: 'center',
-                    }}
-                  />
-                </>
+                  <Grid item xs={12}>
+                    <TextField
+                      type="password"
+                      label="パスワード"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      fullWidth
+                    />
+                    {passworderror && <Typography color="error">{passerrormessage}</Typography>}
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Button variant="contained" onClick={signup} sx={{ml:3}} >
+                      登録
+                    </Button>
+                    <Button onClick={changeSignStatus}>ログインページへ</Button>
+                  </Grid>
+                </Grid>
+                <Snackbar
+                  open={errorPopup}
+                  autoHideDuration={5000}
+                  onClose={handleSnackbarClose}
+                  message={backend_error}
+                  anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'center',
+                  }}
+                />
+              </>
             )}
           </Grid>
         </Grid>
-        </>
+      </>
       )}
       <Typography>{session_status}</Typography>
     </AppContainer>
