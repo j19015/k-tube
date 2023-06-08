@@ -59,26 +59,26 @@ function App() {
     setErrorPopup(false);
   };
 
+  const fetchData = async () => {
+    const status = await session_confirm();
+    setSession_status(status as boolean);
+  };
+  const session_confirm = async () => {
+    try {
+      const res: Response = await fetch(`${clientUrl}/session`,{
+        credentials: "include"
+      });
+      const data: Data2 = await res.json();
+      console.log(data);
+      return data.login_session_status;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  }
+
   useEffect(() => {
-    const session_confirm = async () => {
-      try {
-        const res: Response = await fetch(`${clientUrl}/session`,{
-          credentials: "include"
-        });
-        const data: Data2 = await res.json();
-        console.log(data);
-        return data.login_session_status;
-      } catch (error) {
-        console.log(error);
-        return false;
-      }
-    };
-
-    const fetchData = async () => {
-      const status = await session_confirm();
-      setSession_status(status as boolean);
-    };
-
+    session_confirm();
     fetchData();
   },[]);
 
@@ -179,9 +179,21 @@ function App() {
     setSign_status(childState);
   };
 
+  const handleChildSessionChange = (childState: any) => {
+    setSession_status(false);
+  };
+
   return (
     <>
-      <Header onChildStateChange={handleChildStateChange} onUploadButtonClicked={() => {setMove_upload(!move_upload);} }/>
+      <Header 
+        onChildStateChange={handleChildStateChange} 
+        onChildSessionChange={handleChildSessionChange} 
+        onUploadButtonClicked={() => {setMove_upload(!move_upload);} } 
+        session_status={session_status} 
+        onSessionButtonClicked={() => {setSession_status(false);} }
+        onSignInButtonClicked={()=>{setSign_status(false) }}
+        onSignUpButtonClicked={()=>{setSign_status(true) }}
+        />
       <AppContainer>
       {session_status ? (
         <>
