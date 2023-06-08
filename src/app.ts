@@ -144,24 +144,50 @@ app.use(
   
   //作成
 
-  app.post('/signup', async(req, res) => {
-
+  app.post('/signup', async (req, res) => {
     const userRepository = dataSource.getRepository(User);
     try {
       const user = new User();
-      user.uname = req.body.uname;
-      user.password = req.body.password;
+      const uname = req.body.uname;
+      const password = req.body.password;
+  
+      // ユーザ名に使用できる文字は英数字のみであるかをチェック
+      const alphanumericRegex = /^[a-zA-Z0-9]+$/;
+      if (!alphanumericRegex.test(uname)) {
+        res.json({ status: 0, message: 'ユーザ名には英数字のみ使用できます' }).end();
+        return;
+      }
+  
+      // データベース上に存在するユーザ名は登録できないことをチェック
+      const existingUser = await userRepository.findOne({ where: { uname: uname } });
+      if (existingUser) {
+        res.json({ status: 0, message: '既に存在するユーザ名です' }).end();
+        return;
+      }
+  
+      // パスワードは英数字8文字以上で、少なくとも1文字以上のアルファベットを含むことをチェック
+      const passwordRegex = /^(?=.*[a-zA-Z])[a-zA-Z0-9]{8,}$/;
+      if (!passwordRegex.test(password)) {
+        res.json({
+          status: 0,
+          message: 'パスワードは英数字8文字以上で、少なくとも1文字以上のアルファベットを含む必要があります',
+        }).end();
+        return;
+      }
+  
+      user.uname = uname;
+      user.password = password;
   
       // エンティティをデータベースに保存
       await dataSource.manager.save(user);
   
-      res.json({ status: 1 }).end();
+      res.json({ status: 1, message: 'ユーザが正常に登録されました' }).end();
     } catch (error) {
       console.error(error);
-      //res.status(500).json({ error: 'Failed to save user' }).end();
-      res.json({ status: 0 }).end();
+      res.json({ status: 0, message: 'ユーザの保存に失敗しました' }).end();
     }
   });
+  
 
   app.post('/signin', async (req, res) => {
     const { uname, password } = req.body;
