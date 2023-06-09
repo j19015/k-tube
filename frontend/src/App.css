@@ -28,6 +28,15 @@
   color: #61dafb;
 }
 
+.btn {
+  text-align: center;
+  margin: auto;
+}
+
+
+
+
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
@@ -35,4 +44,43 @@
   to {
     transform: rotate(360deg);
   }
+}
+.main{
+  text-align:center;
+  margin:0 auto;
+}
+
+
+.contents{
+  margin: 50px;
+  display: inline-block;
+  width: 300px;
+  height: 200px;
+  margin: 1em;
+}
+
+.video{
+  padding:10%
+}
+
+.back{
+  margin:10px;
+}
+
+.error{
+ color: red;
+ font-size: 10px;
+}
+
+
+.signmain{
+  background: #fff;
+  margin: 0em auto;
+  padding: 1em;
+  max-width: 370px;
+  text-align: center;
+}
+
+.title{
+  font-size: 30px;
 }

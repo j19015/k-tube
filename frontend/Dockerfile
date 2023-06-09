@@ -1,23 +1,13 @@
 # フロントエンド用Dockerfile
 
 # Node.jsのイメージをベースにする
-FROM node:14-alpine
+FROM node:18
 
 # 作業ディレクトリを設定
 WORKDIR /app
 
-# 依存関係をインストール
-COPY package*.json ./
-RUN npm install
-
-# ソースコードをコピー
-COPY . .
-
-# フロントエンドのビルド
-RUN npm run build
-
 # ポートの公開
-EXPOSE 3000
+EXPOSE 3001
 
 # アプリケーションの起動
-CMD ["npm", "start"]
+CMD ["sh","-c","npm install && npm run start"]
